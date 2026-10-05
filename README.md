@@ -41,12 +41,12 @@ Prints em [`docs/`](docs/).
 
 ## 4. Arquitetura
 
-- Front-end estático: um único `index.html` (HTML, CSS e JavaScript puro), sem dependências nem build.
+- Front-end estático: um único `index.html` sem dependências 
 - Rotas compatíveis com GitHub Pages.
 - Aprovar no celular do cliente reflete no painel.
 
 
-**Evolução prevista (produção):** API + banco de dados (status e orçamentos), envio automático do link por WhatsApp, upload de fotos pelo mecânico e autenticação no painel.
+**Evolução prevista (produção):** Envio automático do link por WhatsApp, upload de fotos pelo mecânico e autenticação no painel.
 
 ## 5. Como executar
 
