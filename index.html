@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Auto Center Veloz | Acompanhamento de serviços</title>
+<style>
+:root{--bg:#eef0ec;--card:#fff;--ink:#20262e;--mute:#5d6671;--line:#d5d9d2;--blue:#1f4e79;--amber:#e8a317;--green:#2e7d4f;--red:#b8392b;--ring:#1f4e79}
+@media(prefers-color-scheme:dark){:root{--bg:#171b20;--card:#222830;--ink:#eef0ec;--mute:#a3acb6;--line:#38414b;--blue:#7fb2e5;--amber:#f0b83a;--green:#5fbf88;--red:#e8786a;--ring:#7fb2e5}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 "Avenir Next","Segoe UI",Roboto,Arial,sans-serif}
+button{font:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--ring);outline-offset:2px}
+header{display:flex;flex-wrap:wrap;gap:.5rem 1.5rem;align-items:baseline;justify-content:space-between;padding:1rem 1.25rem;border-bottom:4px solid var(--amber);background:var(--card)}
+header h1{margin:0;font-size:1.25rem;font-weight:800;letter-spacing:-.01em}
+header span{color:var(--mute);font-size:.9rem}
+main{max-width:1180px;margin:0 auto;padding:1.25rem}
+.board{display:grid;grid-template-columns:repeat(5,minmax(200px,1fr));gap:.75rem;overflow-x:auto;padding-bottom:.5rem}
+.col h2{font-size:.95rem;margin:0 0 .5rem;display:flex;justify-content:space-between}
+.col h2 small{color:var(--mute);font-weight:400}
+.car{background:var(--card);border:1px solid var(--line);border-left:6px solid var(--blue);border-radius:6px;padding:.7rem;margin-bottom:.6rem}
+.car.alert{border-left-color:var(--red)}
+.plate{display:inline-block;font:700 .95rem/1 ui-monospace,Menlo,Consolas,monospace;border:2px solid var(--ink);border-radius:4px;padding:.2rem .4rem}
+.car p{margin:.35rem 0;font-size:.88rem;color:var(--mute)}
+.warn{color:var(--red);font-weight:700}
+.row{display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.5rem}
+.btn{border:1px solid var(--ink);background:transparent;color:var(--ink);border-radius:5px;padding:.4rem .7rem;font-size:.85rem}
+.btn.main{background:var(--ink);color:var(--bg)}
+.btn.ok{background:var(--green);border-color:var(--green);color:#fff;font-size:1rem;padding:.7rem 1.2rem}
+.btn.no{border-color:var(--red);color:var(--red);font-size:1rem;padding:.7rem 1.2rem}
+.hint{color:var(--mute);font-size:.9rem;margin:0 0 1rem}
+.client{max-width:560px;margin:0 auto}
+.client h2{font-size:1.6rem;margin:.2rem 0 0;letter-spacing:-.02em}
+.road{list-style:none;margin:1.5rem 0;padding:0 0 0 1.6rem;border-left:4px solid var(--line)}
+.road li{position:relative;padding:0 0 1rem 1rem;color:var(--mute)}
+.road li::before{content:"";position:absolute;left:-2.1rem;top:.15rem;width:18px;height:18px;border-radius:50%;background:var(--bg);border:4px solid var(--line)}
+.road li.done{color:var(--ink)}.road li.done::before{background:var(--green);border-color:var(--green)}
+.road li.now{color:var(--ink);font-weight:800}.road li.now::before{background:var(--amber);border-color:var(--amber);box-shadow:0 0 0 6px color-mix(in srgb,var(--amber) 30%,transparent)}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:1rem;margin-bottom:1rem}
+.panel h3{margin:0 0 .6rem;font-size:1rem}
+table{width:100%;border-collapse:collapse}td{padding:.4rem 0;border-bottom:1px solid var(--line)}td:last-child{text-align:right;white-space:nowrap}
+.total td{font-weight:800;border:0;font-size:1.1rem}
+.photos{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.6rem}
+.photo{aspect-ratio:4/3;border-radius:6px;background:repeating-linear-gradient(45deg,var(--line),var(--line) 8px,transparent 8px,transparent 16px);display:flex;align-items:flex-end;padding:.5rem;font-size:.8rem;color:var(--ink)}
+.photo span{background:var(--card);padding:.15rem .4rem;border-radius:3px}
+.msg{padding:.8rem 1rem;border-radius:6px;font-weight:700}
+.msg.g{background:color-mix(in srgb,var(--green) 20%,transparent)}.msg.r{background:color-mix(in srgb,var(--red) 20%,transparent)}
+@media(prefers-reduced-motion:no-preference){.road li.now::before{animation:p 2s ease-in-out 3}@keyframes p{50%{transform:scale(1.25)}}}
+</style>
+</head>
+<body>
+<header><h1>Auto Center Veloz</h1><span id="sub"></span></header>
+<main id="app"></main>
+<script>
+const ST=[["recebido","Recebido"],["diagnostico","Em diagnóstico"],["aguardando","Aguardando sua aprovação"],["servico","Em serviço"],["pronto","Pronto para retirada"]];
+const min=m=>Date.now()-m*60000;
+const SEED=[
+ {id:"a1",placa:"RTK-4J21",modelo:"Honda Civic 2019",cliente:"Marina Souza",status:"aguardando",elev:2,desde:min(190),itens:[["Pastilhas de freio dianteiras",280],["Disco de freio dianteiro (par)",460],["Mão de obra",150]],fotos:["Disco com desgaste irregular","Pastilha abaixo do limite"],aprov:null},
+ {id:"b2",placa:"QWE-8H55",modelo:"VW Gol 2016",cliente:"Carlos Lima",status:"servico",elev:1,desde:min(75),itens:[["Troca de óleo e filtro",230]],fotos:[],aprov:"sim"},
+ {id:"c3",placa:"FDS-1A09",modelo:"Fiat Argo 2021",cliente:"Paula Nunes",status:"diagnostico",elev:3,desde:min(40),itens:[],fotos:[],aprov:null},
+ {id:"d4",placa:"JHG-7C33",modelo:"Toyota Corolla 2018",cliente:"Rafael Alves",status:"recebido",elev:null,desde:min(10),itens:[],fotos:[],aprov:null},
+ {id:"e5",placa:"MNB-2K80",modelo:"Chevrolet Onix 2020",cliente:"Julia Prado",status:"pronto",elev:null,desde:min(25),itens:[["Revisão de 40 mil km",690]],fotos:[],aprov:"sim"},
+ {id:"f6",placa:"POI-5D12",modelo:"Hyundai HB20 2017",cliente:"Marcos Dias",status:"aguardando",elev:4,desde:min(50),itens:[["Correia dentada e tensor",720],["Bomba d'água",340]],fotos:["Correia com trincas"],aprov:null}
+];
+let cars;
+try{cars=JSON.parse(localStorage.getItem("veloz")||"null")}catch(e){}
+cars=cars||SEED;
+const save=()=>{try{localStorage.setItem("veloz",JSON.stringify(cars))}catch(e){}};
+const brl=v=>v.toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+const tempo=t=>{const m=Math.round((Date.now()-t)/60000);return m<60?m+" min":Math.floor(m/60)+"h"+String(m%60).padStart(2,"0")};
+const idx=s=>ST.findIndex(x=>x[0]===s);
+const app=document.getElementById("app"),sub=document.getElementById("sub");
+
+function painel(){
+  const oc=cars.filter(c=>c.elev).length;
+  sub.textContent=oc+" de 5 elevadores ocupados";
+  app.innerHTML='<p class="hint">Painel da oficina. Cartões em vermelho esperam resposta do cliente há mais de 2 horas.</p><div class="board">'+
+  ST.map(([k,nome])=>{const l=cars.filter(c=>c.status===k);
+    return `<section class="col"><h2>${nome}<small>${l.length}</small></h2>`+l.map(c=>{
+      const atraso=k==="aguardando"&&Date.now()-c.desde>12e5*6;
+      return `<article class="car${atraso?" alert":""}"><span class="plate">${c.placa}</span>
+      <p>${c.modelo}<br>${c.cliente}${c.elev?"<br>Elevador "+c.elev:""}</p>
+      <p class="${atraso?"warn":""}">${k==="aguardando"?"Sem resposta há ":"Neste status há "}${tempo(c.desde)}</p>
+      ${c.aprov?`<p>Orçamento ${c.aprov==="sim"?"aprovado":"recusado"}</p>`:""}
+      <div class="row">${k!=="pronto"?`<button class="btn main" data-av="${c.id}">Avançar status</button>`:""}
+      <button class="btn" data-lk="${c.id}">Copiar link do cliente</button></div></article>`}).join("")+"</section>"}).join("")+"</div>";
+}
+function cliente(id){
+  const c=cars.find(x=>x.id===id);
+  if(!c){app.innerHTML='<div class="client"><p>Link inválido. Peça um novo link à recepção.</p></div>';return}
+  sub.textContent="Acompanhamento do seu veículo";
+  const i=idx(c.status),tot=c.itens.reduce((s,x)=>s+x[1],0);
+  let acao="";
+  if(c.status==="aguardando"&&!c.aprov)acao=`<div class="row"><button class="btn ok" data-ap="sim">Aprovar orçamento</button><button class="btn no" data-ap="nao">Recusar</button></div>`;
+  else if(c.aprov)acao=`<p class="msg ${c.aprov==="sim"?"g":"r"}">${c.aprov==="sim"?"Orçamento aprovado. Já avisamos a oficina.":"Orçamento recusado. A recepção vai entrar em contato."}</p>`;
+  app.innerHTML=`<div class="client"><span class="plate">${c.placa}</span><h2>${c.modelo}</h2><p class="hint">Olá, ${c.cliente.split(" ")[0]}. Atualizado há ${tempo(c.desde)}.</p>
+  <ol class="road">${ST.map((s,n)=>`<li class="${n<i?"done":n===i?"now":""}">${s[1]}</li>`).join("")}</ol>
+  ${c.itens.length?`<div class="panel"><h3>Orçamento</h3><table>${c.itens.map(x=>`<tr><td>${x[0]}</td><td>${brl(x[1])}</td></tr>`).join("")}<tr class="total"><td>Total</td><td>${brl(tot)}</td></tr></table></div>`:""}
+  ${c.fotos.length?`<div class="panel"><h3>Fotos das peças</h3><div class="photos">${c.fotos.map(f=>`<div class="photo"><span>${f}</span></div>`).join("")}</div></div>`:""}
+  ${acao}<p class="hint"><a href="#/">Voltar ao painel (demonstração)</a></p></div>`;
+}
+function rota(){const m=location.hash.match(/^#\/cliente\/(\w+)/);m?cliente(m[1]):painel()}
+app.addEventListener("click",e=>{
+  const b=e.target.closest("button");if(!b)return;
+  const m=location.hash.match(/^#\/cliente\/(\w+)/);
+  if(b.dataset.av){const c=cars.find(x=>x.id===b.dataset.av);c.status=ST[idx(c.status)+1][0];c.desde=Date.now();
+    if(c.status==="pronto")c.elev=null;
+    if(c.status==="aguardando"&&!c.itens.length){c.itens=[["Serviço a definir pela oficina",0]]}
+    save();painel()}
+  if(b.dataset.lk){const u=location.href.split("#")[0]+"#/cliente/"+b.dataset.lk;
+    (navigator.clipboard?navigator.clipboard.writeText(u):Promise.reject()).then(()=>b.textContent="Link copiado").catch(()=>prompt("Copie o link:",u))}
+  if(b.dataset.ap&&m){const c=cars.find(x=>x.id===m[1]);c.aprov=b.dataset.ap;c.status=b.dataset.ap==="sim"?"servico":c.status;c.desde=Date.now();save();cliente(c.id)}
+});
+addEventListener("hashchange",rota);rota();
+</script>
+</body>
+</html>
