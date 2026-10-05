@@ -41,7 +41,7 @@ Prints em [`docs/`](docs/).
 
 ## 4. Arquitetura
 
-- Front-end estático: um único `![index.html]` sem dependências 
+- Front-end estático: um único `index.html` sem dependências 
 - Rotas compatíveis com GitHub Pages.
 - Aprovar no celular do cliente reflete no painel.
 
