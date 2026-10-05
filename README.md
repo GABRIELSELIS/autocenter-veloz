@@ -3,9 +3,9 @@
 
 Web app(link): o cliente acompanha o conserto e aprova o orçamento pelo celular, mais rápido sem aplicativo externo.
 
-Projeto da disciplina Design Profissional (Estudo de Caso 3), Prof. Sedenilso Antonio Machado.
+Projeto da disciplina Design Profissional, Prof. Sedenilso Antonio Machado.
 
-`https://GABRIELSELIS.github.io/autocenter-veloz/`
+`https://github.com/GABRIELSELIS/autocenter-veloz`
 
 ## 1. Briefing
 
@@ -51,7 +51,7 @@ Prints em [`docs/`](docs/).
 ## 5. Como executar
 
 ```bash
-git clone https://github.com/GABRIELSELIS/autocenter-veloz.git
+git clone https://github.com/GABRIELSELIS/autocenter-veloz
 cd autocenter-veloz
 # opção 1: abrir index.html no navegador
 # opção 2: servidor local
