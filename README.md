@@ -34,8 +34,8 @@ A Auto Center Veloz tem ótima reputação, mas depende de orçamento em papel.
 
 ## 3. Telas
 
-- **Painel da oficina** (`docs/painel.png`): quadro com etapas, elevador de cada carro, botão "Avançar status" e "Copiar link do cliente".
-- **Acompanhamento do cliente** (`docs/cliente.png`): linha do tempo, orçamento, fotos e aprovação com um toque.
+- **Painel da oficina** (`#docs/painel.png`): quadro com etapas, elevador de cada carro, botão "Avançar status" e "Copiar link do cliente".
+- **Acompanhamento do cliente** (`#docs/cliente.png`): linha do tempo, orçamento, fotos e aprovação com um toque.
 
 Prints em [`docs/`](docs/).
 
